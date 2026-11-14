@@ -1,0 +1,10 @@
+.DS_Store
+Thumbs.db
+*.tmp
+node_modules/
+packs/*/index.db
+packs/*/index.db-journal
+packs/*/index.db-wal
+packs/*/index.db-shm
+.vscode/
+.idea/

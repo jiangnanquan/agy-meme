@@ -1,0 +1,19 @@
+{
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "name": "agy-meme",
+  "displayName": "Neko Meme Stickers (猫娘表情包)",
+  "version": "1.2.0",
+  "description": "Bidirectional Neko reaction stickers for Antigravity Desktop chat bubbles with an inline composer picker, MCP sticker tools, custom image import, and automatic CLI isolation.",
+  "logo": "assets/logo.svg",
+  "suggestedPrompts": [
+    "看看目前表情包图库里有哪些猫娘贴纸，挑一张开心的发出来试试",
+    "Check agy-meme desktop sticker status and show available moods",
+    "帮我把本地图片收录进猫娘表情包图库"
+  ],
+  "author": {
+    "name": "jiangnanquan",
+    "url": "https://github.com/jiangnanquan"
+  },
+  "repository": "https://github.com/jiangnanquan/agy-meme",
+  "homepage": "https://github.com/jiangnanquan/agy-meme"
+}

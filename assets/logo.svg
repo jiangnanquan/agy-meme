@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="bgGrad" x1="24" y1="24" x2="232" y2="232" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="55%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+    <linearGradient id="faceGrad" x1="64" y1="72" x2="192" y2="206" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#EEF2FF"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer badge with ~10% safe padding -->
+  <rect x="24" y="24" width="208" height="208" rx="48" fill="url(#bgGrad)"/>
+  <!-- Subtle top highlight ring -->
+  <rect x="28" y="28" width="200" height="200" rx="44" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="3"/>
+
+  <!-- Cat silhouette (ears + round face) -->
+  <path d="M68 108 L64 62 C64 56 71 53 76 57 L106 81 C113 78 120 77 128 77 C136 77 143 78 150 81 L180 57 C185 53 192 56 192 62 L188 108 C196 119 200 132 200 146 C200 181 168 205 128 205 C88 205 56 181 56 146 C56 132 60 119 68 108 Z"
+        fill="url(#faceGrad)" stroke="#1E1B4B" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- Inner ears -->
+  <path d="M74 96 L72 70 L94 87 Z" fill="#F472B6" fill-opacity="0.82"/>
+  <path d="M182 96 L184 70 L162 87 Z" fill="#818CF8" fill-opacity="0.82"/>
+
+  <!-- Heterochromia cat eyes (blue-violet left, warm amber right) -->
+  <ellipse cx="101" cy="139" rx="10" ry="12" fill="#4F46E5"/>
+  <ellipse cx="155" cy="139" rx="10" ry="12" fill="#F59E0B"/>
+  <circle cx="98" cy="134" r="3.8" fill="#FFFFFF"/>
+  <circle cx="152" cy="134" r="3.8" fill="#FFFFFF"/>
+
+  <!-- Blush marks -->
+  <ellipse cx="82" cy="155" rx="9" ry="5" fill="#F472B6" fill-opacity="0.5"/>
+  <ellipse cx="174" cy="155" rx="9" ry="5" fill="#F472B6" fill-opacity="0.5"/>
+
+  <!-- Cute nose + ":3" cat mouth -->
+  <polygon points="128,151 123,145 133,145" fill="#EC4899"/>
+  <path d="M111 160 C115 168 124 168 128 159 C132 168 141 168 145 160"
+        fill="none" stroke="#1E1B4B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Four-point sparkle star -->
+  <path d="M204 42 L208 54 L220 58 L208 62 L204 74 L200 62 L188 58 L200 54 Z"
+        fill="#FDE047" stroke="#1E1B4B" stroke-width="2" stroke-linejoin="round"/>
+</svg>

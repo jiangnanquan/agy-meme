@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "agy-meme": {
+      "command": "node",
+      "args": [
+        "${PLUGIN_ROOT}/server.mjs"
+      ]
+    }
+  }
+}

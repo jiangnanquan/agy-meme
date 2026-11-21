@@ -9,6 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-7C4DFF.svg)](./LICENSE)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-00BFA5.svg)](#architecture)
 [![Antigravity Desktop](https://img.shields.io/badge/Antigravity-Desktop_Plugin-FF4081.svg)](#installation)
+[![M8ven Score](https://m8ven.ai/badge/mcp/jiangnanquan-agy-meme-1mifsd?v=269159e949704f04adbf0def7726ef5b)](https://m8ven.ai/mcp/jiangnanquan-agy-meme-1mifsd?s=readme)
 
 </div>
 

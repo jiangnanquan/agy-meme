@@ -1,0 +1,13 @@
+.git
+.gitignore
+.DS_Store
+assets
+scripts
+skills
+rules
+install.sh
+install.ps1
+uninstall.sh
+README.md
+README.zh-CN.md
+mcp_config.json

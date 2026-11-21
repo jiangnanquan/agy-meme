@@ -712,7 +712,7 @@ function handleRequest(msg) {
         result: {
           protocolVersion: clientProto,
           capabilities: { tools: {} },
-          serverInfo: { name: 'agy-meme', version: '1.2.0' },
+          serverInfo: { name: 'agy-meme', version: '1.3.0' },
         },
       });
       return;

@@ -79,12 +79,12 @@ const MOODS = {
 };
 
 const MOOD_WORDS = {
-  happy: '开心 高兴 兴奋 喜欢 卖萌 可爱 比心 哈哈 欢迎 得意 好耶 满意 赞 期待',
-  angry: '生气 愤怒 暴躁 笨蛋 嫌弃 哈气 炸毛 怒 无语 达咩',
-  sad: '难过 哭 委屈 叹气 求饶 沮丧 崩溃 沉淀',
-  shy: '害羞 腼腆 脸红 花痴 撒娇 摸摸头 献花 捧心 捏脸',
-  confused: '困惑 疑惑 惊讶 问号 懵 惊呆 震惊 慌张 宕机 怀疑 发呆',
-  daily: '困 睡觉 早上好 打招呼 你好 上班 下班 摸鱼 工作 咖啡 吃瓜 吃饭 炸鸡 自拍 日常',
+  happy: '开心 高兴 兴奋 喜欢 卖萌 可爱 比心 哈哈 欢迎 得意 好耶 满意 赞 期待 嚣张 狂拽 耍帅 cool 酷 拿捏 打call 应援 庆祝 干杯 敬酒 气场 霸气 坏笑 计划通 happy cheerful celebrate love praise awesome swagger laugh lgtm pass launch',
+  angry: '生气 愤怒 暴躁 笨蛋 嫌弃 哈气 炸毛 怒 无语 达咩 傲娇 哼 吐槽 死鱼眼 指正 敲黑板 抓狂 angry mad rage pout hiss tsundere deadpan grumpy',
+  sad: '难过 哭 委屈 叹气 求饶 沮丧 崩溃 沉淀 道歉 对不起 认错 滑跪 燃尽 融化 累瘫 汗流浃背 慌张 sad cry sob tears sorry apology melted tired panic',
+  shy: '害羞 腼腆 脸红 花痴 撒娇 摸摸头 献花 捧心 捏脸 崇拜 星星眼 捂脸 尴尬 社死 偷偷看 抱抱 shy blush headpat hug flower awe cute facepalm',
+  confused: '困惑 疑惑 惊讶 问号 懵 惊呆 震惊 慌张 宕机 怀疑 发呆 思考 烧脑 放大镜 排查 查bug 暗中观察 摊手 无奈 脑洞 confused think question detective bug mindblown shocked shrug peek',
+  daily: '困 睡觉 早上好 打招呼 你好 上班 下班 摸鱼 工作 咖啡 吃瓜 吃饭 奶茶 敲代码 编程 捉虫 敬礼 收到 记笔记 上菜 交付 晚安 日常 daily coding laptop coffee boba tea watermelon sleep goodnight salute note',
 };
 
 const RECENT_CAPTION_LIMIT = 14;
@@ -309,18 +309,29 @@ function handleSendMeme(args = {}) {
     const tokens = tokenizeQuery(query);
     const scored = [];
     for (const r of pool) {
-      const hay = `${r.caption || ''} ${r.keywords || ''} ${r.file_name || ''} ${r.tag || ''}`.toLowerCase();
+      const capLower = String(r.caption || '').toLowerCase();
+      const kwLower = String(r.keywords || '').toLowerCase();
+      const sceneLower = String(r.scene || '').toLowerCase();
+      const hay = `${capLower} ${kwLower} ${sceneLower} ${String(r.file_name || '').toLowerCase()} ${String(r.tag || '').toLowerCase()}`;
       let score = 0;
       for (const t of tokens) {
-        if (hay.includes(t)) score += (r.caption || '').toLowerCase().includes(t) ? 3 : 2;
+        if (!hay.includes(t)) continue;
+        if (capLower.includes(t)) score += 4;
+        else if (kwLower.includes(t)) score += 3;
+        else if (sceneLower.includes(t)) score += 2;
+        else score += 1;
       }
-      if (score > 0) scored.push({ r, score });
+      if (score > 0) {
+        // 同分情况下优先推荐无固定台词束缚的纯表情通配贴纸
+        if (!r.text_overlay) score += 0.35;
+        scored.push({ r, score });
+      }
     }
     if (scored.length > 0) {
       mode = 'keyword';
       scored.sort((a, b) => b.score - a.score);
-      const top = scored.filter((x) => x.score >= scored[0].score - 1).map((x) => x.r);
-      const rest = scored.filter((x) => x.score < scored[0].score - 1).map((x) => x.r);
+      const top = scored.filter((x) => x.score >= scored[0].score - 1.2).map((x) => x.r);
+      const rest = scored.filter((x) => x.score < scored[0].score - 1.2).map((x) => x.r);
       matched = [...shuffleWithRecentBias(top, excludeSet), ...shuffleWithRecentBias(rest, excludeSet)].slice(0, limit);
     }
   }
@@ -337,18 +348,23 @@ function handleSendMeme(args = {}) {
       const filtered = allRows.filter((r) => fine.has(String(r.tag || '').toLowerCase()));
       if (filtered.length > 0) moodPool = filtered;
     }
-    matched = shuffleWithRecentBias(moodPool, excludeSet).slice(0, limit);
+    // 随机兜底时优先排布无固定台词的纯动作表情，避免误发窄梗配字图
+    const purePool = moodPool.filter((r) => !r.text_overlay);
+    const textPool = moodPool.filter((r) => Boolean(r.text_overlay));
+    matched = [...shuffleWithRecentBias(purePool, excludeSet), ...shuffleWithRecentBias(textPool, excludeSet)].slice(0, limit);
   }
 
   rememberCaptions(matched);
 
   const lines = matched.map((m, i) => {
     const cap = String(m.caption || m.file_name || '').slice(0, 80);
-    return `${i + 1}. [表情: ${cap}] | 情绪=${m.tag} | 关键词=${m.keywords || ''}`;
+    const textTag = m.text_overlay ? `含配字「${m.text_overlay}」(仅限字面语境契合时用)` : '无字纯表情';
+    const scenePart = m.scene ? ` | 画面与适用=${m.scene}` : '';
+    return `${i + 1}. [表情: ${cap}] | 情绪=${m.tag} | 类型=${textTag}${scenePart} | 关键词=${m.keywords || ''}`;
   });
 
   const instruction =
-    '发图规则：从下面挑中 1 张最贴合当前语境的候选，把 `[表情: 描述]` 整段逐字原样写进你的回复中（推荐单独占一行；描述必须完全照抄候选原文，不要自己编造、也不要加任何 URL 或本地路径）。日常聊天氛围到位时自然使用，不要每回合刷屏。';
+    '选图契约：1) 先看「画面与适用」及「类型」——凡标注 `含配字「...」` 的候选，必须在该台词与当前对话字面意思 100% 严丝合缝时才可选用，严禁拿具体窄梗图去充当宽泛情绪；2) 常规情绪互动优先挑选 `无字纯表情` 中神态动作最传神的 1 张；3) 挑中后将 `[表情: 描述]` 原样单独占一行写入回复（禁改字、禁加路径/URL）；若无真正贴切候选则宁缺毋滥不发表情。';
 
   return {
     content: [
@@ -364,6 +380,9 @@ function handleSendMeme(args = {}) {
         caption: m.caption,
         marker: `[表情: ${m.caption}]`,
         tag: m.tag,
+        hasText: Boolean(m.text_overlay),
+        textOverlay: m.text_overlay || null,
+        scene: m.scene || '',
         keywords: m.keywords,
         packId: m.packId,
         file: m.file_name,
@@ -375,7 +394,7 @@ function handleSendMeme(args = {}) {
 function handleMemeList(args = {}) {
   const mood = normalizeTag(args.mood || args.tag || '');
   const packId = String(args.pack_id || '').trim();
-  const limit = Math.max(1, Math.min(100, Number(args.limit) || 40));
+  const limit = Math.max(1, Math.min(100, Number(args.limit) || 60));
 
   const { cfg, packs, allRows } = loadActiveMemes(packId);
   const filtered = mood ? allRows.filter((r) => normalizeTag(r.tag) === mood) : allRows;
@@ -395,7 +414,11 @@ function handleMemeList(args = {}) {
     .map((p) => `${p.id}(${p.manifest.name || p.id}${cfg.activePacks.includes(p.id) ? ', 已启用' : ''})`)
     .join('，');
 
-  const lines = filtered.slice(0, limit).map((m, i) => `${i + 1}. [${m.tag}] ${m.caption} (${m.file_name}) — ${m.keywords || ''}`);
+  const lines = filtered.slice(0, limit).map((m, i) => {
+    const txtBadge = m.text_overlay ? ` [配字:${m.text_overlay}]` : '';
+    const sceneBrief = m.scene ? ` | ${m.scene}` : '';
+    return `${i + 1}. [${m.tag}] ${m.caption}${txtBadge} (${m.file_name}) — ${m.keywords || ''}${sceneBrief}`;
+  });
 
   return {
     content: [

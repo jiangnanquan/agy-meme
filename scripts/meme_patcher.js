@@ -462,6 +462,7 @@ function __agSetupMemeRenderer(invokeFn) {
     ];
 
     let libState = null;
+    let lastLibLoadedAt = 0;
     let configOverride = null;
     let configOverrideSeq = 0;
     let libPromise = null;
@@ -565,6 +566,9 @@ function __agSetupMemeRenderer(invokeFn) {
                 const f = forms[fi];
                 if (f && mp.has(f)) return mp.get(f);
             }
+        }
+        if (Date.now() - lastLibLoadedAt > 4000 && !libPromise) {
+            ensureLibrary(true);
         }
         const needles = Array.from(new Set(splitDescTokens(raw).map(looseCaption).filter(Boolean)));
         let best = null;
@@ -674,6 +678,8 @@ function __agSetupMemeRenderer(invokeFn) {
             scheduleLibraryRetry();
             return Promise.resolve(null);
         }
+        if (forceRefresh && libPromise) return libPromise;
+        const prevCount = libState && Array.isArray(libState.memes) ? libState.memes.length : -1;
         const reqSeq = configOverrideSeq;
         libPromise = invokeFn("ag-ux:meme-list")
             .then((res) => {
@@ -692,16 +698,32 @@ function __agSetupMemeRenderer(invokeFn) {
                 } else {
                     configOverride = null;
                 }
+                if (forceRefresh) {
+                    blobCache.clear();
+                }
                 libState = {
                     config,
                     packs,
                     memes,
                     lookup: buildLookup(memes)
                 };
+                lastLibLoadedAt = Date.now();
                 libRetryAfter = 0;
                 if (libRetryTimer) {
                     clearTimeout(libRetryTimer);
                     libRetryTimer = null;
+                }
+                if (forceRefresh && prevCount >= 0 && memes.length !== prevCount) {
+                    const bubbles = document.querySelectorAll(BUBBLE_SEL);
+                    for (let bi = 0; bi < bubbles.length; bi++) {
+                        const b = bubbles[bi];
+                        if (Array.isArray(b.__agMemeGroups)) {
+                            for (let gi = 0; gi < b.__agMemeGroups.length; gi++) {
+                                teardownMemeGroup(b.__agMemeGroups[gi]);
+                            }
+                            b.__agMemeGroups = [];
+                        }
+                    }
                 }
                 if (typeof globalThis.__agScheduleMemeSync === "function") {
                     globalThis.__agScheduleMemeSync();
@@ -1623,7 +1645,7 @@ function __agSetupMemeRenderer(invokeFn) {
         if (triggerBtn) triggerBtn.setAttribute("data-active", "true");
         boardEl.style.display = "flex";
         positionBoard(triggerBtn);
-        ensureLibrary(false).then(() => {
+        ensureLibrary(true).then(() => {
             if (boardOpen) renderBoard();
         });
         renderBoard();
@@ -2721,13 +2743,17 @@ function seedDefaultPacks(quiet = false) {
     const dstNeko = path.join(targetPacksRoot, "gemini-neko");
     if (fs.existsSync(srcNeko)) {
         fs.mkdirSync(dstNeko, { recursive: true });
-        for (const f of ["manifest.json", "memes.json"]) {
-            const s = path.join(srcNeko, f);
-            const d = path.join(dstNeko, f);
-            if (fs.existsSync(s) && !fs.existsSync(d)) {
-                fs.copyFileSync(s, d);
-            }
-        }
+        const srcManifestPath = path.join(srcNeko, "manifest.json");
+        const dstManifestPath = path.join(dstNeko, "manifest.json");
+        const srcMemesJsonPath = path.join(srcNeko, "memes.json");
+        const dstMemesJsonPath = path.join(dstNeko, "memes.json");
+
+        let srcVer = "";
+        let dstVer = "";
+        try { srcVer = String(JSON.parse(fs.readFileSync(srcManifestPath, "utf8")).version || ""); } catch (_) {}
+        try { if (fs.existsSync(dstManifestPath)) dstVer = String(JSON.parse(fs.readFileSync(dstManifestPath, "utf8")).version || ""); } catch (_) {}
+        const isBundledUpgrade = Boolean(srcVer && dstVer && srcVer !== dstVer);
+
         const srcMemesDir = path.join(srcNeko, "memes");
         const dstMemesDir = path.join(dstNeko, "memes");
         if (fs.existsSync(srcMemesDir)) {
@@ -2738,10 +2764,29 @@ function seedDefaultPacks(quiet = false) {
                     const sf = path.join(from, ent.name);
                     const df = path.join(to, ent.name);
                     if (ent.isDirectory()) walkCopy(sf, df);
-                    else if (ent.isFile() && !fs.existsSync(df)) fs.copyFileSync(sf, df);
+                    else if (ent.isFile() && (!fs.existsSync(df) || isBundledUpgrade)) fs.copyFileSync(sf, df);
                 }
             };
             walkCopy(srcMemesDir, dstMemesDir);
+        }
+
+        if (!fs.existsSync(dstMemesJsonPath) && fs.existsSync(srcMemesJsonPath)) {
+            if (fs.existsSync(srcManifestPath)) fs.copyFileSync(srcManifestPath, dstManifestPath);
+            fs.copyFileSync(srcMemesJsonPath, dstMemesJsonPath);
+        } else if (isBundledUpgrade && fs.existsSync(srcMemesJsonPath)) {
+            try {
+                const srcDoc = JSON.parse(fs.readFileSync(srcMemesJsonPath, "utf8"));
+                const dstDoc = JSON.parse(fs.readFileSync(dstMemesJsonPath, "utf8"));
+                const srcRows = Array.isArray(srcDoc.memes) ? srcDoc.memes : [];
+                const dstRows = Array.isArray(dstDoc.memes) ? dstDoc.memes : [];
+                const srcPaths = new Set(srcRows.map((r) => r.path));
+                // Preserve any user-imported custom stickers whose file still exists on disk and wasn't part of bundled
+                const customRows = dstRows.filter((r) => r && r.path && !srcPaths.has(r.path) && !r.source_url && fs.existsSync(path.join(dstNeko, r.path)));
+                const mergedRows = srcRows.concat(customRows);
+                const nextManifest = Object.assign({}, srcDoc.manifest || {}, { count: mergedRows.length });
+                fs.writeFileSync(dstManifestPath, JSON.stringify(nextManifest, null, 2) + "\n", "utf8");
+                fs.writeFileSync(dstMemesJsonPath, JSON.stringify({ manifest: nextManifest, memes: mergedRows }, null, 2) + "\n", "utf8");
+            } catch (_) {}
         }
     }
 

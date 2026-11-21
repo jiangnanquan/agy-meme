@@ -14,7 +14,11 @@
 
 `agy-meme` 让 AI 助手在 **Antigravity Desktop** 对话中用生动的紫蓝异色瞳猫娘表情包与你互动——同时在终端 / CLI 会话（`agy`、`agycli`、IDE、ACP）中**自动静默隔离**，绝不向终端吐出无法渲染的 `[表情: ...]` 文本标签。
 
-内置精选自开源社区的 26 张高质量 `gemini-neko` WebP 表情贴纸（覆盖 `happy` / `angry` / `sad` / `shy` / `confused` / `daily` 六大情绪），既可**独立安装在英文原版 Antigravity Desktop**，也可**无损叠加在 [`antigravity-desktop-cn`](https://github.com/Silas-02/antigravity-desktop-cn) 中文汉化版之上**。
+内置 48 张全球零语言障碍、画风 100% 统一的高清透明模切 `gemini-neko` v2.2 WebP 表情贴纸（全套纯动作与视觉符号传情、零文字窄梗束缚，支持中英双语检索与 `scene` 画面实况语义路由，覆盖 `happy` / `angry` / `sad` / `shy` / `confused` / `daily` 六大情绪），既可**独立安装在英文原版 Antigravity Desktop**，也可**无损叠加在 [`agy-desktop-exo`](https://github.com/jiangnanquan/agy-desktop-exo) / [`antigravity-desktop-cn`](https://github.com/Silas-02/antigravity-desktop-cn) 中文增强汉化版之上**。
+
+<p align="center">
+  <img src="./assets/sticker-showcase.webp" width="100%" alt="48 张全球通用 Gemini 猫娘透明模切贴纸全家福" />
+</p>
 
 ---
 
@@ -49,7 +53,7 @@ agy-meme/
 ├── assets/logo.svg            # 插件图标（1:1 异色瞳猫娘徽标）
 ├── rules/AGENTS.md            # 桌面端门禁与表情包协作规范
 ├── skills/agy-meme/SKILL.md   # 技能说明与使用指引
-├── packs/gemini-neko/         # 26 张精选 WebP 猫娘贴纸与索引
+├── packs/gemini-neko/         # 48 张全统一无字透明模切 WebP 猫娘贴纸与语义索引
 ├── scripts/meme_patcher.js    # 跨平台 Electron ASAR 叠加补丁器（纯 Node.js）
 ├── install.sh / install.ps1   # 一键安装脚本（macOS / Linux / Windows）
 └── uninstall.sh               # 无损卸载脚本
@@ -127,5 +131,5 @@ node scripts/meme_patcher.js --status
 
 ## 致谢与协议
 
-- 内置 `gemini-neko` 猫娘表情包合集精选并整理自开源项目 [`lmy414/ai-girl-stickers`](https://github.com/lmy414/ai-girl-stickers)。
+- 角色视觉致敬画师 **ZipZipPipe** 原创的紫蓝星空猫耳异色瞳 Gemini 娘设定（参见 [`shuaizenge/ai-girls`](https://github.com/shuaizenge/ai-girls) 与 [`lmy414/ai-girl-stickers`](https://github.com/lmy414/ai-girl-stickers)）；内置 `gemini-neko` v2.2 贴纸库为全套 48 张统一 Q 版无字透明模切贴纸，无语言门槛、全球通用。
 - 本项目基于 [MIT License](./LICENSE) 开源发布。

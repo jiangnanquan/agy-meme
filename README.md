@@ -14,7 +14,11 @@
 
 `agy-meme` gives your AI assistant expressive reaction stickers inside **Antigravity Desktop** chat bubbles — while staying completely silent in terminal / CLI sessions (`agy`, `agycli`, IDE, ACP).
 
-It bundles 26 curated purple-blue heterochromia neko WebP stickers across 6 moods (`happy`, `angry`, `sad`, `shy`, `confused`, `daily`) and works **both standalone on vanilla English Antigravity Desktop and stacked cleanly on top of [`antigravity-desktop-cn`](https://github.com/Silas-02/antigravity-desktop-cn)**.
+It bundles 48 universal, zero-text, 100% style-consistent RGBA die-cut purple-blue heterochromia neko WebP stickers (`gemini-neko` v2.2 — universally understood across all languages with bilingual search & `scene` semantic routing) across 6 moods (`happy`, `angry`, `sad`, `shy`, `confused`, `daily`) and works **both standalone on vanilla English Antigravity Desktop and stacked cleanly on top of [`agy-desktop-exo`](https://github.com/jiangnanquan/agy-desktop-exo) / [`antigravity-desktop-cn`](https://github.com/Silas-02/antigravity-desktop-cn)**.
+
+<p align="center">
+  <img src="./assets/sticker-showcase.webp" width="100%" alt="48 Universal Gemini Neko Die-Cut Stickers Showcase" />
+</p>
 
 ---
 
@@ -48,7 +52,7 @@ agy-meme/
 ├── assets/logo.svg            # Plugin icon (1:1 heterochromia neko emblem)
 ├── rules/AGENTS.md            # Desktop host gate & sticker collaboration rules
 ├── skills/agy-meme/SKILL.md   # Slash / agent skill instructions
-├── packs/gemini-neko/         # 26 curated WebP stickers + manifest.json + memes.json
+├── packs/gemini-neko/         # 48 universal text-free RGBA die-cut WebP stickers + memes.json
 ├── scripts/meme_patcher.js    # Cross-platform Electron ASAR overlay patcher
 ├── install.sh / install.ps1   # One-command installer (macOS / Linux / Windows)
 └── uninstall.sh               # Non-destructive uninstaller
@@ -126,5 +130,5 @@ If you also use `antigravity-desktop-cn`:
 
 ## Credits & License
 
-- Built-in `gemini-neko` sticker collection curated from [`lmy414/ai-girl-stickers`](https://github.com/lmy414/ai-girl-stickers).
+- Character visual design pays homage to **ZipZipPipe**'s iconic heterochromia Gemini catgirl (indexed in [`shuaizenge/ai-girls`](https://github.com/shuaizenge/ai-girls) and [`lmy414/ai-girl-stickers`](https://github.com/lmy414/ai-girl-stickers)); built-in `gemini-neko` v2.2 provides 48 unified, language-agnostic chibi die-cut stickers understood worldwide.
 - Released under the [MIT License](./LICENSE).

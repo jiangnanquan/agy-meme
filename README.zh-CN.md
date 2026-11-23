@@ -10,6 +10,7 @@
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-00BFA5.svg)](#架构设计)
 [![Antigravity Desktop](https://img.shields.io/badge/Antigravity-Desktop_Plugin-FF4081.svg)](#快速安装)
 [![M8ven Score](https://m8ven.ai/badge/mcp/jiangnanquan-agy-meme-1mifsd?v=269159e949704f04adbf0def7726ef5b)](https://m8ven.ai/mcp/jiangnanquan-agy-meme-1mifsd?s=readme)
+[![Glama Score](https://glama.ai/mcp/servers/jiangnanquan/agy-meme/badges/score.svg)](https://glama.ai/mcp/servers/jiangnanquan/agy-meme)
 
 </div>
 
